@@ -112,7 +112,7 @@ public class GameEngine
         }
         
         Helpers.AddGameResult(GameType.Multiplication, difficulty, correctAnswers, wrongAnswers);
-        Helpers.ShowLastGameResult();;
+        Helpers.ShowLastGameResult();
     }
 
     public void DivisionGame(GameDifficulty difficulty) 
@@ -149,7 +149,7 @@ public class GameEngine
         }
         
         Helpers.AddGameResult(GameType.Division, difficulty, correctAnswers, wrongAnswers);
-        Helpers.ShowLastGameResult();;
+        Helpers.ShowLastGameResult();
     }
 
     private (float userInput, float answer) GenerateSingleQuestion(GameDifficulty difficulty, string operation, int questionNumber)
