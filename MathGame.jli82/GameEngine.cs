@@ -61,8 +61,8 @@ public class GameEngine
         {
             do
             {
-                a = _random.Next(-81, 81) * (int)difficulty;
-                b = _random.Next(-9, 9) * (int)difficulty;
+                a = (difficulty == GameDifficulty.Easy) ? _random.Next(-81, 81) : _random.Next(-150, 150) * (int)difficulty;
+                b = (difficulty == GameDifficulty.Easy) ? _random.Next(-9, 9) : _random.Next(-20, 20);
             } while (b == 0 || a % b != 0);
         }
         else
