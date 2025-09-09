@@ -44,19 +44,19 @@ public class Menu
             switch (gameSelected)
             {
                 case 1:
-                    _gameEngine.AdditionGame(GetGameDifficulty());
+                    _gameEngine.StartGame(GameType.Addition, GetGameDifficulty());
                     break;
                 case 2:
-                    _gameEngine.SubtractionGame(GetGameDifficulty());
+                    _gameEngine.StartGame(GameType.Subtraction, GetGameDifficulty());
                     break;
                 case 3:
-                    _gameEngine.MultiplicationGame(GetGameDifficulty());
+                    _gameEngine.StartGame(GameType.Multiplication, GetGameDifficulty());
                     break;
                 case 4:
-                    _gameEngine.DivisionGame(GetGameDifficulty());
+                    _gameEngine.StartGame(GameType.Division, GetGameDifficulty());
                     break;
                 case 5:
-                    _gameEngine.RandomGame(GetGameDifficulty());
+                    _gameEngine.StartGame(GameType.Random, GetGameDifficulty());
                     break;
                 case 6:
                     // game history option
@@ -73,7 +73,6 @@ public class Menu
                     {
                         Helpers.ShowGameHistory();
                     }
-
                     break;
                 case 7:
                     // quit option

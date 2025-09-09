@@ -3,156 +3,58 @@
 public class GameEngine
 {
     private Random _random = new Random();
-    
-    public void AdditionGame(GameDifficulty difficulty)
+
+    public void StartGame(GameType gameType, GameDifficulty difficulty)
     {
         Console.Clear();
-        Console.WriteLine($"Welcome to the Addition Game (Difficulty: {difficulty})! Press q to quit.");
+        Console.WriteLine($"Welcome to the {gameType} Game (Difficulty: {difficulty})! Press q to quit.");
         Console.WriteLine(new string('-', 100));
         
         int questionNumber = 1;
         int correctAnswers = 0;
         int wrongAnswers = 0;
-
+        bool quit = false;
+        string[] operations = { "+", "-", "x", "/" }; // for random game mode
+        
         while (true)
         {
-            (float userInput, float answer) = GenerateSingleQuestion(difficulty, "+", questionNumber);
+            int userInput = 0, answer = 0;
             
-            if (userInput == Int16.MaxValue && answer == Int16.MinValue)
+            if (gameType == GameType.Addition)
             {
-                break;
+                (userInput, answer) = GenerateSingleQuestion(difficulty, "+", questionNumber, ref quit);
             }
-            if (userInput == answer)
+            else if (gameType == GameType.Subtraction)
             {
-                Console.WriteLine("Correct!");
-                correctAnswers++;
+                (userInput, answer) = GenerateSingleQuestion(difficulty, "-", questionNumber, ref quit);
+            }
+            else if (gameType == GameType.Multiplication)
+            {
+                (userInput, answer) = GenerateSingleQuestion(difficulty, "x", questionNumber, ref quit);
+            }
+            else if (gameType == GameType.Division)
+            {
+                (userInput, answer) = GenerateSingleQuestion(difficulty, "/", questionNumber, ref quit);
             }
             else
             {
-                Console.WriteLine("Wrong!");
-                wrongAnswers++;
+                string randomOperation = operations[_random.Next(operations.Length)];
+                (userInput, answer) = GenerateSingleQuestion(difficulty, randomOperation, questionNumber, ref quit);
             }
-                
-            questionNumber++;
-            Console.WriteLine(new string('-', 100));
-        }
-        
-        Helpers.AddGameResult(GameType.Addition, difficulty, correctAnswers, wrongAnswers);
-        Helpers.ShowLastGameResult();
-    }
-
-    public void SubtractionGame(GameDifficulty difficulty) 
-    {
-        Console.Clear();
-        Console.WriteLine($"Welcome to the Subtraction Game (Difficulty: {difficulty})! Press q to quit.");
-        Console.WriteLine(new string('-', 100));
-        
-        int questionNumber = 1;
-        int correctAnswers = 0;
-        int wrongAnswers = 0;
-
-        while (true)
-        {
-            (float userInput, float answer) = GenerateSingleQuestion(difficulty, "-", questionNumber);
             
-            if (userInput == Int16.MaxValue && answer == Int16.MinValue)
+            if (quit)
             {
                 break;
             }
-            if (userInput == answer)
-            {
-                Console.WriteLine("Correct!");
-                correctAnswers++;
-            }
-            else
-            {
-                Console.WriteLine("Wrong!");
-                wrongAnswers++;
-            }
-                
-            questionNumber++;
-            Console.WriteLine(new string('-', 100));
+            
+            CheckAnswer(userInput, answer, ref correctAnswers, ref wrongAnswers, ref questionNumber);
         }
         
-        Helpers.AddGameResult(GameType.Subtraction, difficulty, correctAnswers, wrongAnswers);
+        Helpers.AddGameResult(gameType, difficulty, correctAnswers, wrongAnswers);
         Helpers.ShowLastGameResult();
     }
 
-    public void MultiplicationGame(GameDifficulty difficulty) 
-    {
-        Console.Clear();
-        Console.WriteLine($"Welcome to the Multiplication Game (Difficulty: {difficulty})! Press q to quit.");
-        Console.WriteLine(new string('-', 100));
-        
-        int questionNumber = 1;
-        int correctAnswers = 0;
-        int wrongAnswers = 0;
-
-        while (true)
-        {
-            (float userInput, float answer) = GenerateSingleQuestion(difficulty, "x", questionNumber);
-            
-            if (userInput == Int16.MaxValue && answer == Int16.MinValue)
-            {
-                break;
-            }
-            if (userInput == answer)
-            {
-                Console.WriteLine("Correct!");
-                correctAnswers++;
-            }
-            else
-            {
-                Console.WriteLine("Wrong!");
-                wrongAnswers++;
-            }
-                
-            questionNumber++;
-            Console.WriteLine(new string('-', 100));
-        }
-        
-        Helpers.AddGameResult(GameType.Multiplication, difficulty, correctAnswers, wrongAnswers);
-        Helpers.ShowLastGameResult();
-    }
-
-    public void DivisionGame(GameDifficulty difficulty) 
-    {
-        Console.Clear();
-        Console.WriteLine($"Welcome to the Division Game (Difficulty: {difficulty})! Press q to quit.");
-        Console.WriteLine(new string('-', 100));
-        
-        int questionNumber = 1;
-        int correctAnswers = 0;
-        int wrongAnswers = 0;
-
-        while (true)
-        {
-            (float userInput, float answer) = GenerateSingleQuestion(difficulty, "/", questionNumber);
-            
-            if (userInput == Int16.MaxValue && answer == Int16.MinValue)
-            {
-                break;
-            }
-            if (userInput == answer)
-            {
-                Console.WriteLine("Correct!");
-                correctAnswers++;
-            }
-            else
-            {
-                Console.WriteLine("Wrong!");
-                wrongAnswers++;
-            }
-            
-            questionNumber++;
-            Console.WriteLine(new string('-', 100));
-        }
-        
-        Helpers.AddGameResult(GameType.Division, difficulty, correctAnswers, wrongAnswers);
-        Helpers.ShowLastGameResult();
-    }
-
-    private (float userInput, float answer) GenerateSingleQuestion(GameDifficulty difficulty, string operation, int questionNumber)
+    private (int userInput, int answer) GenerateSingleQuestion(GameDifficulty difficulty, string operation, int questionNumber, ref bool quitGame)
     {
         int a, b;
         if (operation.Equals("/"))
@@ -168,15 +70,15 @@ public class GameEngine
             a = (operation.Equals("+") || operation.Equals("-")) ? _random.Next(-50, 50) * (int)difficulty : _random.Next(-9, 9) * (int)difficulty;
             b = (operation.Equals("+") || operation.Equals("-")) ? _random.Next(-50, 50) * (int)difficulty : _random.Next(-9, 9) * (int)difficulty;
         }
-        
-        Console.WriteLine((operation.Equals("/")) ? $"Question #{questionNumber}: {a} {operation} {b}\t(Round to two decimal places if necessary)" :
-            $"Question #{questionNumber}: {a} {operation} {b}");
+
+        Console.WriteLine($"Question #{questionNumber}: {a} {operation} {b}");
         Console.Write("Enter your answer (q to quit): ");
         string? userAnswer = Console.ReadLine();
         
         if (userAnswer?.ToLower().Trim() == "q")
         {
-            return (Int16.MaxValue, Int16.MinValue);
+            quitGame = true;
+            return (0, 0);
         }
         
         while (string.IsNullOrEmpty(userAnswer) || !float.TryParse(userAnswer, out _))
@@ -189,7 +91,8 @@ public class GameEngine
                 
             if (userAnswer?.ToLower().Trim() == "q")
             {
-                return (Int16.MaxValue, Int16.MinValue);
+                quitGame = true;
+                return (0, 0);
             }
         }
 
@@ -207,51 +110,27 @@ public class GameEngine
         }
         if (operation.Equals("/"))
         {
-            return ((float)Math.Round(Convert.ToDouble(userAnswer), 2), (float)Math.Round((float)a / b, 2));
+            return (Convert.ToInt32(userAnswer), a / b);
         }
         
-        return (Int16.MaxValue, Int16.MinValue);
+        quitGame = true;
+        return (0, 0);
     }
 
-    public void RandomGame(GameDifficulty difficulty)
+    private void CheckAnswer(int userInput, int answer, ref int correctAnswers, ref int wrongAnswers, ref int questionNumber)
     {
-        Console.Clear();
-        Console.WriteLine($"Welcome to the Random Game (Difficulty: {difficulty})! Press q to quit.");
-        Console.WriteLine(new string('-', 100));
-        
-        int questionNumber = 1;
-        int correctAnswers = 0;
-        int wrongAnswers = 0;
-        string[] operations = { "+", "-", "x", "/" };
-
-        while (true)
+        if (userInput == answer)
         {
-            string operation = operations[_random.Next(operations.Length)];
-            
-            (float userInput, float answer) = GenerateSingleQuestion(difficulty, operation, questionNumber);
-            
-            // if user enter "q", then userInput=Int16.MaxValue and answer=Int16.MinValue
-            if (userInput == Int16.MaxValue && answer == Int16.MinValue)
-            {
-                break;
-            }
-            
-            if (userInput == answer)
-            {
-                Console.WriteLine("Correct!");
-                correctAnswers++;
-            }
-            else
-            {
-                Console.WriteLine("Wrong!");
-                wrongAnswers++;
-            }
-            
-            questionNumber++;
-            Console.WriteLine(new string('-', 100));
+            Console.WriteLine("Correct!");
+            correctAnswers++;
+        }
+        else
+        {
+            Console.WriteLine("Wrong!");
+            wrongAnswers++;
         }
         
-        Helpers.AddGameResult(GameType.Random, difficulty, correctAnswers, wrongAnswers);
-        Helpers.ShowLastGameResult();
+        questionNumber++;
+        Console.WriteLine(new string('-', 100));
     }
 }
