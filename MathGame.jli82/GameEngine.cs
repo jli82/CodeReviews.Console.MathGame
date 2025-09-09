@@ -44,7 +44,7 @@ public class GameEngine
     public void SubtractionGame(GameDifficulty difficulty) 
     {
         Console.Clear();
-        Console.WriteLine("Welcome to the Subtraction Game! Press q to quit.");
+        Console.WriteLine($"Welcome to the Subtraction Game (Difficulty: {difficulty})! Press q to quit.");
         Console.WriteLine(new string('-', 100));
         
         int questionNumber = 1;
@@ -81,7 +81,7 @@ public class GameEngine
     public void MultiplicationGame(GameDifficulty difficulty) 
     {
         Console.Clear();
-        Console.WriteLine("Welcome to the Multiplication Game! Press q to quit.");
+        Console.WriteLine($"Welcome to the Multiplication Game (Difficulty: {difficulty})! Press q to quit.");
         Console.WriteLine(new string('-', 100));
         
         int questionNumber = 1;
@@ -118,7 +118,7 @@ public class GameEngine
     public void DivisionGame(GameDifficulty difficulty) 
     {
         Console.Clear();
-        Console.WriteLine("Welcome to the Division Game! Press q to quit.");
+        Console.WriteLine($"Welcome to the Division Game (Difficulty: {difficulty})! Press q to quit.");
         Console.WriteLine(new string('-', 100));
         
         int questionNumber = 1;
@@ -161,7 +161,7 @@ public class GameEngine
             {
                 a = _random.Next(-81, 81) * (int)difficulty;
                 b = _random.Next(-9, 9) * (int)difficulty;
-            } while (b == 0);
+            } while (b == 0 || a % b != 0);
         }
         else
         {
